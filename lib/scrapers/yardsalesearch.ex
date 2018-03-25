@@ -1,9 +1,12 @@
-require IEx
 defmodule Scrapers do
   defmodule YardSaleSearch do
     # TODO: allow city to be passed in
     # List available cities as options
     # VALID_CITIES = ["Durham", "Asheville", etc.]
+    @cities ["Asheville", "Durham"]
+    def cities do
+      @cities
+    end
 
     @base_url "https://www.yardsalesearch.com/garage-sales-durham-nc.html"
     @multi_sales "https://www.yardsalesearch.com/garage-sales.html?week=0&date=2018-03-24&zip=Durham%2C+North+Carolina&r=100&q="
@@ -13,7 +16,7 @@ defmodule Scrapers do
     TODO: Allow search criteria to be passed in (date, city, etc.)
     """
     def yard_sales() do
-      case HTTPoison.get(@base_url) do
+      case HTTPoison.get(@multi_sales) do
         {:ok, response} ->
           case response.status_code do
             200 ->
