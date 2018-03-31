@@ -4,19 +4,19 @@ defmodule Scrapers do
     # List available cities as options
     # VALID_CITIES = ["Durham", "Asheville", etc.]
     @cities ["Asheville", "Durham"]
+
+    # TODO: Somehow associate these cities with state abbreviations, too
+
     def cities do
       @cities
     end
-
-    @base_url "https://www.yardsalesearch.com/garage-sales-durham-nc.html"
-    @multi_sales "https://www.yardsalesearch.com/garage-sales.html?week=0&date=2018-03-24&zip=Durham%2C+North+Carolina&r=100&q="
 
     @doc """
     Fetch a list of all of yardsales matching search criteria
     TODO: Allow search criteria to be passed in (date, city, etc.)
     """
     def yard_sales() do
-      case HTTPoison.get(@multi_sales) do
+      case HTTPoison.get(search_url()) do
         {:ok, response} ->
           case response.status_code do
             200 ->
@@ -29,6 +29,12 @@ defmodule Scrapers do
           end
         _ -> :error
       end
+    end
+
+    defp search_url(city \\ "Durham", state \\ "NC") do
+    # @base_url "https://www.yardsalesearch.com/garage-sales-durham-nc.html"
+    # @multi_sales "https://www.yardsalesearch.com/garage-sales.html?week=0&date=2018-03-24&zip=Durham%2C+North+Carolina&r=100&q="
+      "https://www.yardsalesearch.com/garage-sales-#{city}-#{state}.html"
     end
 
     defp extract_city_and_address(yard_sale) do

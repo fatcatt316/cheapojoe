@@ -9,7 +9,7 @@ defmodule CheapoJoe.CLI do
 	def parse_args(argv) do
     args = OptionParser.parse(
       argv,
-      strict: [help: :boolean, cities: :boolean], # TODO: Different args
+      strict: [help: :boolean, cities: :boolean],
       alias: [h: :help]
     )
 
@@ -18,7 +18,7 @@ defmodule CheapoJoe.CLI do
         :list_yard_sales
 
       {[cities: true], _, _} ->
-        :list_cities
+        :choose_city
 
       {[help: true], _, _} ->
         :help
@@ -31,24 +31,26 @@ defmodule CheapoJoe.CLI do
     end
   end
 
-  def process(:help) do
+  defp process(:help) do
     IO.puts """
-    cheapojoe --yard_sales  # Look for yard sales around Durham!
+    cheapojoe --yard_sales # Look for yard sales around Durham!
+    cheapojoe --help       # A helping hand from CheapJoe
+    cheapojoe --cities     # Choose city to find yard sales in
     """
     System.halt(0)
   end
 
-  def process(:list_cities) do
-    CheapoJoe.enter_city_selection_flow
+  defp process(:choose_city) do
+    CheapoJoe.enter_city_selection_flow()
   end
 
-  def process(:list_yard_sales) do
+  defp process(:list_yard_sales) do
   	# TODO: A general top-level "yard_sales" that combines input from different sites
-    Scrapers.YardSaleSearch.yard_sales
+    Scrapers.YardSaleSearch.yard_sales()
   end
 
-  def process(:invalid_arg) do
-    IO.puts "Invalid argument(s) passed. See usage below:"
+  defp process(:invalid_arg) do
+    IO.puts "Invalid argument(s) passed. Take a gander at usage below:"
     process(:help)
   end
 end

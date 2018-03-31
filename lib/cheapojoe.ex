@@ -1,17 +1,8 @@
 defmodule CheapoJoe do
   def enter_city_selection_flow() do
     IO.puts("Hold on a tick while I find available cities...")
-    # TODO: Top-level scraper that gets info from multiple sites
-    # case Scraper.get_locations() do
-    #   {:ok, locations} ->
-    #     {:ok, location} = ask_user_to_select_location(locations)
-    #     display_soup_list(location)
-
-    #   :error ->
-    #     IO.puts("An unexpected error occurred. Please try again.")
-    # end
-    IO.puts("One moment while I fetch the list of locations...")
-    {:ok, city} = ask_user_to_select_city(Scrapers.YardSaleSearch.cities)
+    IO.puts("One moment while I fetch the list o' cities...")
+    {:ok, city} = ask_user_to_select_city(Scrapers.YardSaleSearch.cities()) # TODO: Fetch available cities live
     display_yard_sales(city)
   end
 
@@ -25,14 +16,11 @@ defmodule CheapoJoe do
   selection will result in this funtion being recursively called.
   """
   def ask_user_to_select_city(cities) do
-    # Print an indexed list of the cities
-    cities
-    |> Enum.with_index(1)
-    |> Enum.each(fn({city, index}) -> IO.puts(" #{index} - #{city}") end) # TODO: Tighten up
+    print_indexed_city_list(cities)
 
     case IO.gets("Choose a city number: ") |> Integer.parse() do
       :error ->
-        IO.puts("Invalid selection. Try again.")
+        IO.puts("Invalid selection. Try a number.")
         ask_user_to_select_city(cities)
 
       {city_nb, _} ->
@@ -49,7 +37,13 @@ defmodule CheapoJoe do
     end
   end
 
- def display_yard_sales(city) do
+  defp print_indexed_city_list(cities) do
+    cities
+    |> Enum.with_index(1)
+    |> Enum.each(fn({city, index}) -> IO.puts(" #{index} - #{city}") end) # TODO: Tighten up
+  end
+
+  def display_yard_sales(city) do
     IO.puts("One moment while I search out some yard sales in #{city}...")
     # case Scraper.get_soups(location.id) do # TODO: Pass in city
     case Scrapers.YardSaleSearch.yard_sales do
@@ -57,7 +51,7 @@ defmodule CheapoJoe do
         yard_sales
         |> Enum.each(fn(yard_sale) -> IO.puts("#{yard_sale[:street_address]}, #{yard_sale[:city]}, NC") end)
       _ ->
-        IO.puts("Shucks, we got an error. Try again, or select a city using `cheapo_joe --cities` (TODO: THIS)")
+        IO.puts("Dangit, we got an error. Try again, or select a city using `cheapojoe --cities`.")
     end
   end
 end
