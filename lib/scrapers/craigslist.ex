@@ -1,4 +1,3 @@
-require IEx
 defmodule Scrapers.Craigslist do
 	# TODO: allow city to be passed in
   # List available cities as options
